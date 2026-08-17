@@ -17,12 +17,14 @@ func write(cfg Config) error {
 	if err != nil {
 		return err
 	}
-
-	data, err := json.Marshal(cfg)
+	
+	file, err := os.Create(configFilePath)
 	if err != nil {
 		return err
 	}
-	
-	err = os.WriteFile(configFilePath, data, 0777)
+	defer file.Close()
+
+	encoder := json.NewEncoder(file)
+	err = encoder.Encode(cfg)	
 	return err
 } 

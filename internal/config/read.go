@@ -21,17 +21,23 @@ func Read() (Config, error) {
 	if err != nil {
 		return Config{}, err
 	}
-	body, err := os.ReadFile(configFilePath)
+
+	file, err := os.Open(configFilePath)
 
 	if err != nil {
 		return Config{}, err
 	}
 	
-	var config Config
+	defer file.Close()
 
-	if err := json.Unmarshal(body, &config); err != nil {
+	decoder := json.NewDecoder(file)
+
+	var cfg Config
+
+	err = decoder.Decode(&cfg)
+	if err != nil {
 		return Config{}, err
 	}
 
-	return config, nil
+	return cfg, nil
 }
