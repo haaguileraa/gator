@@ -35,7 +35,8 @@ func main() {
 	cmds := NewCommands()
 	cmds.register("login", handlerLogin)
 	cmds.register("register", handlerRegister)
-
+	cmds.register("reset", handlerReset)
+	
 	args := os.Args
 	if len(args) < 2 {
 		log.Fatalf("Expecting at least 2 arguments, got %d instead", len(args))
