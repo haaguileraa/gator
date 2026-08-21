@@ -1,3 +1,6 @@
+-- name: CleanDatabase :exec
+TRUNCATE TABLE users;
+
 -- name: CreateUser :one
 INSERT INTO users (id, created_at, updated_at, name)
 VALUES (
@@ -12,5 +15,5 @@ RETURNING *;
 SELECT * FROM users
 WHERE name = $1 LIMIT 1;
 
--- name: CleanDatabase :exec
-TRUNCATE TABLE users;
+-- name: GetUsers :many
+SELECT name FROM users;
