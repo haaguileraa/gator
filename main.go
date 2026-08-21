@@ -1,30 +1,52 @@
 package main
 
 import(
-	"fmt"
+	_ "github.com/lib/pq"
+	"database/sql"
 	"github.com/haaguileraa/gator/internal/config"
+	"github.com/haaguileraa/gator/internal/database"
 	"log"
+	"os"
+	"fmt"
 )
 
 
-
 func main() {
+	// load config
 	cfg, err := config.Read()
 	if err != nil {
 		log.Fatalf("could not read config: %v", err)
 	}
 
-	fmt.Printf("Config: %+v\n", cfg)
+	fmt.Println("connecting to database", cfg.DbURL)
 
-	err = cfg.SetUser("haaguileraa")
-	if err != nil {
-		log.Fatalf("could not set user: %v", err)
+	// open the connection to the database
+	db, err := sql.Open("postgres", cfg.DbURL)
+	dbQueries := database.New(db)
+
+	st := state{
+		cfg :	&cfg,
+		db :	dbQueries,
 	}
 
-	cfg, err = config.Read()
 	if err != nil {
-		log.Fatalf("could not read config: %v", err)
+		log.Fatalf("Error creating new state %v", err)
+	}
+	cmds := NewCommands()
+	cmds.register("login", handlerLogin)
+	cmds.register("register", handlerRegister)
+
+	args := os.Args
+	if len(args) < 2 {
+		log.Fatalf("Expecting at least 2 arguments, got %d instead", len(args))
 	}
 
-	fmt.Printf("Config: %+v\n",cfg)
+	cmd := command{
+		Name: args[1],
+		Args: args[2:],
+	}
+	err = cmds.run(&st, cmd)
+	if err != nil {
+		log.Fatalf("Could not execute command %+v\n%v", cmd, err)
+	}
 }
