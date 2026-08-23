@@ -1,8 +1,11 @@
 -- name: CreateFeed :one
-INSERT INTO feeds (user_id, name, url)
+INSERT INTO feeds (id, created_at, updated_at, name, url, user_id)
 VALUES (
-	(SELECT id FROM users WHERE id=$1),
+	$1,
 	$2,
-	$3
+	$3,
+	$4,
+	$5,
+	$6
 )
-RETURNING *; 
+RETURNING *;

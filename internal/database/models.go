@@ -11,9 +11,12 @@ import (
 )
 
 type Feed struct {
-	UserID uuid.UUID
-	Name   string
-	Url    string
+	ID        uuid.UUID
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	Name      string
+	Url       string
+	UserID    uuid.UUID
 }
 
 type User struct {
