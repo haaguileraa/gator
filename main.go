@@ -38,7 +38,8 @@ func main() {
 	cmds.register("reset", handlerReset)
 	cmds.register("users", handlerListUsers)
 	cmds.register("agg", handlerAgg)
-	
+	cmds.register("addfeed", handlerAddFeed)
+
 	args := os.Args
 	if len(args) < 2 {
 		log.Fatalf("Expecting at least 2 arguments, got %d instead", len(args))
