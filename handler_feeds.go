@@ -1,6 +1,6 @@
 package main
 
-import(
+import (
 	"context"
 	"fmt"
 	"github.com/haaguileraa/gator/internal/database"
