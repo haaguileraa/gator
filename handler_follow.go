@@ -18,7 +18,7 @@ func handlerFollow(st *state, cmd command, user database.User) error {
 	url := cmd.Args[0]
 	feed, err := st.db.GetFeedByUrl(ctx, url)
 	if err != nil {
-		return fmt.Errorf("error getting feed from url '%s': %w", err)
+		return fmt.Errorf("error getting feed from url '%s': %w", url, err)
 	}
 	
 	createdAt := time.Now().UTC()
