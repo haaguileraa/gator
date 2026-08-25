@@ -30,15 +30,8 @@ func handlerFeeds(st *state, cmd command) error {
 	return nil
 }
 
-func handlerFeedsCurrentUser(st *state, cmd command) error {
-	ctx := context.Background()
-
-	user, err := st.db.GetUser(ctx, st.cfg.CurrentUserName)
-	if err != nil {
-		return fmt.Errorf("error getting current user '%s' information: %w", st.cfg.CurrentUserName, err)
-	}
-	
-	feeds, err := st.db.GetFeedsByUserId(ctx, user.ID)
+func handlerFeedsCurrentUser(st *state, cmd command, user database.User) error {	
+	feeds, err := st.db.GetFeedsByUserId(context.Background(), user.ID)
 	if err != nil {
 		return fmt.Errorf("error obtaining feeds for user %s: %w", user.Name, err)
 	}

@@ -6,8 +6,8 @@ import (
 	"github.com/haaguileraa/gator/internal/database"
 )
 
-func handlerFollowing(st *state, cmd command) error {
-	follows, err := st.db.GetFollowsForUser(context.Background(), st.cfg.CurrentUserName)
+func handlerFollowing(st *state, cmd command, user database.User) error {
+	follows, err := st.db.GetFollowsForUser(context.Background(), user.ID)
 	if err != nil {
 		return fmt.Errorf("error obtaining follows for the current user: %w", err)
 	}

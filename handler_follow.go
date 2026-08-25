@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-func handlerFollow(st *state, cmd command) error {
+func handlerFollow(st *state, cmd command, user database.User) error {
 	if len(cmd.Args) != 1 {
 		return fmt.Errorf("command usage: %s <url>", cmd.Name)
 	}
@@ -21,11 +21,6 @@ func handlerFollow(st *state, cmd command) error {
 		return fmt.Errorf("error getting feed from url '%s': %w", err)
 	}
 	
-	user, err := st.db.GetUser(ctx, st.cfg.CurrentUserName)
-	if err != nil {
-		return fmt.Errorf("error getting current user '%s' information: %w", st.cfg.CurrentUserName, err)
-	}
-
 	createdAt := time.Now().UTC()
 
 	params := database.CreateFeedFollowParams{

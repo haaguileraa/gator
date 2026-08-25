@@ -8,20 +8,13 @@ import (
 	"time"
 )
 
-func handlerAddFeed(st *state, cmd command) error {
+func handlerAddFeed(st *state, cmd command, user database.User) error {
 	if len(cmd.Args) < 2 {
 		return fmt.Errorf("command usage: %s <name> <url>", cmd.Name)
 	}
 	name := cmd.Args[0]
 	url := cmd.Args[1]
 
-	ctx := context.Background()
-	
-	user, err := st.db.GetUser(ctx, st.cfg.CurrentUserName)
-	if err != nil {
-		return fmt.Errorf("error getting current user '%s' information: %w", st.cfg.CurrentUserName, err)
-	}
-	
 	// create feed
 	createdAt := time.Now().UTC()
 
@@ -34,6 +27,7 @@ func handlerAddFeed(st *state, cmd command) error {
 		UserID: user.ID,
 	}
 
+	ctx := context.Background()
 	feed, err := st.db.CreateFeed(ctx, paramsFeed)
 	if err != nil {
 		return fmt.Errorf("error creating feed: %w", err)
