@@ -42,6 +42,7 @@ func main() {
 	cmds.register("login", handlerLogin)
 	cmds.register("register", handlerRegister)
 	cmds.register("reset", handlerReset)
+	cmds.register("unfollow", middlewareLoggedIn(handlerUnfollow))
 	cmds.register("users", handlerListUsers)
 
 	args := os.Args
