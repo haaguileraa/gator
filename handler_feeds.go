@@ -52,6 +52,7 @@ func printFeed(feed database.Feed) {
 	fmt.Println("- ID:		", feed.ID)
 	fmt.Println("- Created at:	", feed.CreatedAt)
 	fmt.Println("- Updated at:	", feed.UpdatedAt)
+	fmt.Println("- Last fetched at:	", feed.LastFetchedAt)
 	fmt.Println("- Name:		", feed.Name)
 	fmt.Println("- URL:		", feed.Url)
 	fmt.Println("- User ID:		", feed.UserID)
