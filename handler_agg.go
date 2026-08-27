@@ -4,7 +4,9 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"github.com/google/uuid"
 	"github.com/haaguileraa/gator/internal/database"
+	"log"
 	"time"
 )
 
@@ -31,19 +33,13 @@ func scrapeFeeds(st *state, user database.User) {
 	ctx := context.Background()
 	feed, err := st.db.GetNextFeedToFetch(ctx, user.ID)
 	if err != nil {
-		fmt.Println("error getting next feed:", err)
+		log.Println("error getting next feed:", err)
 	}
 
 	rssf, err := fetchFeed(ctx, feed.Url)
 	if err != nil {
-		fmt.Printf("error fetching url %s: %w\n", feed.Url, err)
+		log.Printf("error fetching url %s: %w\n", feed.Url, err)
 	}
-
-	fmt.Println("- Title:", rssf.Channel.Title)
-	for _, item := range rssf.Channel.Item {
-		fmt.Println("	- Title:", item.Title)
-	}
-
 
 	fetchedTime := time.Now().UTC() 
 	
@@ -60,8 +56,47 @@ func scrapeFeeds(st *state, user database.User) {
 
 	err = st.db.MarkFeedFetched(ctx, markParams)
 	if err != nil {
-		fmt.Println("error marking feed last fetched:", err)
+		log.Println("error marking feed last fetched:", err)
+	}
+
+
+	fmt.Println("- Title:", rssf.Channel.Title)
+	for _, item := range rssf.Channel.Item {
+		addPost(st, item, feed.ID)
 	}
 }
 
 
+func addPost(st *state, item RSSItem, feedID uuid.UUID) {
+	// description
+	description := sql.NullString {
+		String:	item.Description,
+		Valid:	item.Description != "",
+	}
+	// pubDate
+	t, err := time.Parse(time.RFC3339, item.PubDate)
+	publishedAt := sql.NullTime {
+		Time:	t,
+		Valid:	err == nil,
+	}
+	
+	entryTime := time.Now().UTC()
+	params := database.CreatePostParams {
+		ID: uuid.New(),
+		CreatedAt:	entryTime,
+		UpdatedAt:	entryTime,
+		Title:		item.Title,
+		Url:		item.Link,
+		Description:	description,
+		PublishedAt:	publishedAt,
+		FeedID:		feedID,
+	}
+	
+	post, err := st.db.CreatePost(context.Background(), params)
+	if err != nil {
+		logSqlError(err)
+		return
+	}
+
+	log.Println("	- Title:", post.Title)
+}
