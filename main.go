@@ -35,6 +35,7 @@ func main() {
 	cmds := NewCommands()
 	cmds.register("addfeed", middlewareLoggedIn(handlerAddFeed))
 	cmds.register("agg", middlewareLoggedIn(handlerAgg))
+	cmds.register("browse", middlewareLoggedIn(handlerBrowse))
 	cmds.register("feeds", handlerFeeds)
 	cmds.register("feedscurrent", middlewareLoggedIn(handlerFeedsCurrentUser))
 	cmds.register("follow", middlewareLoggedIn(handlerFollow))
