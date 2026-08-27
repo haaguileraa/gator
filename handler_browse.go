@@ -8,18 +8,21 @@ import (
 )
 
 func handlerBrowse(st *state, cmd command, user database.User) error {
-	if len(cmd.Args) != 1 {
-		return fmt.Errorf("command usage: %s <posts limit>", cmd.Name)
-	}
+	var limit int32
 
-	limit, err := strconv.Atoi(cmd.Args[0])
-	if err != nil {
-		return fmt.Errorf("cannot parse %s as limit value", cmd.Args[0])
+	if len(cmd.Args) != 1 {
+		limit = 2
+	} else {
+		parsed, err := strconv.Atoi(cmd.Args[0])
+		if err != nil {
+			return fmt.Errorf("cannot parse %s as limit value", cmd.Args[0])
+		}
+		limit = int32(parsed)
 	}
 
 	params := database.GetPostsForUserParams {
 		UserID:	user.ID,
-		Limit:	int32(limit),
+		Limit:	limit,
 	}
 
 	posts, err := st.db.GetPostsForUser(context.Background(), params)
